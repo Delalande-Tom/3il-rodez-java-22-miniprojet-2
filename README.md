@@ -10,3 +10,8 @@
 
 <p> L'intéret d'avoir utiliser des types générique est de pouvoir utiliser cet algorithme sur n'importe quoi à partir du moement ou ça respecte les conditions initiales </p>
 
+<h3>Question 3 : </h2>
+<p>Pourquoi pensez-vous que la création d'une interface est une bonne pratique dans ce contexte ?</p>
+
+<p>Je pense qu'effectivement cela est une bonne pratique ainsi nous pourrions implémenter différents algorithme de recherche de chemin, en utilisant l'interface dans différente classes</p>
+
