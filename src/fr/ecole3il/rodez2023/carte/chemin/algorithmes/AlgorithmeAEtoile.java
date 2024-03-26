@@ -45,7 +45,7 @@ public class AlgorithmeAEtoile<E> implements AlgorithmeChemin<E> {
             }
         }
 
-        List<Noeud<E>> chemin = new ArrayList<>();
+        List<Noeud<E>> chemin = new LinkedList<>();
         Noeud<E> noeud = arrivee;
         while (noeud != null) {
             chemin.add(noeud);

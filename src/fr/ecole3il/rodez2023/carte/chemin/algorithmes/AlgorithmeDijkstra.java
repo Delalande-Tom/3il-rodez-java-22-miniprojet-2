@@ -42,7 +42,7 @@ public class AlgorithmeDijkstra<E> implements AlgorithmeChemin<E> {
             }
         }
 
-        List<Noeud<E>> cheminLePlusCourt = new ArrayList<>();
+        List<Noeud<E>> cheminLePlusCourt = new LinkedList<>();
         Noeud<E> noeud = arrivee;
         while (noeud != null) {
             cheminLePlusCourt.add(0, noeud);
