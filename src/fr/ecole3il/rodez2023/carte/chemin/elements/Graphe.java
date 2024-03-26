@@ -27,6 +27,7 @@ public class Graphe<E> {
      * @param cout le coût de l'arête
      */
     public void ajouterArete(Noeud<E> depart, Noeud<E> arrivee, double cout){
+        assert depart != null && arrivee != null;
         ajouterNoeud(depart);
         ajouterNoeud(arrivee);
 
