@@ -107,7 +107,14 @@ public class AdaptateurAlgorithme{
      * @return cout calculé
      */
     static double calculerCout(Case from, Case to){
-        return Math.abs(from.getX() - to.getX()) + Math.abs(from.getY() - to.getY());
+        int penalite =0;
+        if (from.getTuile() != null){
+            penalite += from.getTuile().getPenalite();
+        }
+        if (to.getTuile() != null){
+            penalite += to.getTuile().getPenalite();
+        }
+        return Math.abs(from.getX() - to.getX()) + Math.abs(from.getY() - to.getY()) + penalite;
     }
 
     /**

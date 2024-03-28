@@ -15,3 +15,12 @@
 
 <p>Je pense qu'effectivement cela est une bonne pratique ainsi nous pourrions implémenter différents algorithme de recherche de chemin, en utilisant l'interface dans différente classes</p>
 
+<h2> Ce qui a été fait </h2>
+
+<p> J'ai implémenté l'algorithme de Dijkstra pour trouver le chemin le plus court entre deux noeuds d'un graphe. </p>
+<p> J'ai implémenté l'algorithme A* </p>
+<p>Des Test</p>
+
+<h2> Difficulté rencontré </h2>
+<p> J'ai eu du mal à comprendre comment fonctionne l'algorithme A* </p>
+<p> J'ai eu du mal a faire "L'adaptateur"</p>
