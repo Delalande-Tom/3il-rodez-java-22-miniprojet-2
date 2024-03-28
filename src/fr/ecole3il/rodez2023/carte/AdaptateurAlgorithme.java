@@ -3,78 +3,121 @@ package fr.ecole3il.rodez2023.carte;
 import fr.ecole3il.rodez2023.carte.chemin.algorithmes.AlgorithmeChemin;
 import fr.ecole3il.rodez2023.carte.chemin.elements.Graphe;
 import fr.ecole3il.rodez2023.carte.chemin.elements.Noeud;
-import fr.ecole3il.rodez2023.carte.elements.Carte;
-import fr.ecole3il.rodez2023.carte.elements.Case;
-import fr.ecole3il.rodez2023.carte.elements.Chemin;
-import fr.ecole3il.rodez2023.carte.elements.Tuile;
+import fr.ecole3il.rodez2023.carte.elements.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdaptateurAlgorithme {
+public class AdaptateurAlgorithme{
 
-    public static Chemin trouverChemin(AlgorithmeChemin<Case> algorithme, Carte carte, int xDepart, int yDepart, int xArrivee, int yArrivee) {
+    /**
+     * trouve le chemin pour aller de la case une vers la deux
+     * @param algorithme algorithme à utiliser
+     * @param carte carte sur laquelle on ce situe
+     * @param xDepart coordonée x de départ
+     * @param yDepart coordonné y de départ
+     * @param xArrivee coordonnée x d'arrivé
+     * @param yArrivee coordonnée y d'arrivé
+     * @return le chemin trouvé
+     */
+    public static Chemin trouverChemin(AlgorithmeChemin<Case> algorithme, Carte carte, int xDepart, int yDepart, int xArrivee, int yArrivee){
         Graphe<Case> graphe = creerGraphe(carte);
-        Noeud<Case> depart = graphe.getNoeuds().get(xDepart * carte.getHauteur() + yDepart);
-        Noeud<Case> arrivee = graphe.getNoeuds().get(xArrivee * carte.getHauteur() + yArrivee);
-        List<Noeud<Case>> cheminNoeuds = algorithme.trouverChemin(graphe, depart, arrivee);
-        afficherChemin(cheminNoeuds);
-        return new Chemin(convertirNoeudsEnCases(cheminNoeuds));
+        Noeud<Case> noeudDepart = graphe.getNoeud(xDepart, yDepart);
+        Noeud<Case> noeudArrivee = graphe.getNoeud(xArrivee, yArrivee);
+        List<Noeud<Case>> cheminNoeuds = algorithme.trouverChemin(graphe, noeudDepart, noeudArrivee);
+        List<Case> cheminCases = new ArrayList<>();
+        for (Noeud<Case> noeud : cheminNoeuds) {
+            cheminCases.add(noeud.getValeur());
+        }
+
+        return new Chemin(cheminCases);
     }
 
-
-    static Graphe<Case> creerGraphe(Carte carte) {
+    /**
+     * crée le graphe à partir d'une carte
+     * @param carte carte pour créer le graphe
+     * @return un Graphe
+     */
+    static Graphe<Case> creerGraphe(Carte carte){
         Graphe<Case> graphe = new Graphe<>();
         int largeur = carte.getLargeur();
         int hauteur = carte.getHauteur();
 
-        // Parcours de chaque case de la carte pour créer les noeuds du graphe
-        for (int i = 0; i < largeur; i++) {
-            for (int j = 0; j < hauteur; j++) {
-                Tuile tuileCourante = carte.getTuile(i, j);
-                Case caseCourante = new Case(tuileCourante, i, j);
-                graphe.ajouterNoeud(new Noeud<>(caseCourante));
-                ajouterAretesVoisines(graphe, caseCourante, i, j, largeur, hauteur);
+        // Création des nœuds
+        for (int x = 0; x < largeur; x++) {
+            for (int y = 0; y < hauteur; y++) {
+                Case caseActuelle = new Case(carte.getTuile(x, y), x, y);
+                graphe.ajouterNoeud(new Noeud<>(caseActuelle));
             }
         }
+
+        // Pour je ne sais quelle raison, si je n'utilise pas de double boucle, ça ne fonctionne pas
+        for (int x = 0; x < largeur; x++) {
+            for (int y = 0; y < hauteur; y++) {
+                Case caseActuelle = new Case(carte.getTuile(x, y), x, y);
+                ajouterAretesVoisines(graphe, caseActuelle, x, y, largeur, hauteur);
+            }
+        }
+
         return graphe;
     }
 
+    /**
+     * ajoute toute les arrêtes voisines
+     * @param graphe graphe sur lequel travailler
+     * @param currentCase case actuel
+     * @param x coordonée x
+     * @param y coordonée y
+     * @param largeur largeur de la case
+     * @param hauteur hauteur de la case
+     */
+    static void ajouterAretesVoisines(Graphe<Case> graphe, Case currentCase, int x, int y, int largeur, int hauteur){
+        Noeud<Case> currentNode = null;
+        for (Noeud<Case> noeud : graphe.getNoeuds()) {
+            Case c = noeud.getValeur();
+            if (c.equals(currentCase)) {
+                currentNode = noeud;
+                break;
+            }
+        }
 
-    //TODO Le bug de l'IndexOutOfBoundsException est ici
-    static void ajouterAretesVoisines(Graphe<Case> graphe, Case currentCase, int x, int y, int largeur, int hauteur) {
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dy = -1; dy <= 1; dy++) {
-                if ((dx != 0 || dy != 0) && (x + dx >= 0 && x + dx < largeur && y + dy >= 0 && y + dy < hauteur)) {
-                    //Voisin dans les limites de la carte
-                    Case voisin = graphe.getNoeuds().get((x + dx) * hauteur + (y + dy)).getValeur();
-                    double cout = calculerCout(currentCase, voisin);
-                    graphe.ajouterArete(new Noeud<>(currentCase), new Noeud<>(voisin), cout);
+        assert currentNode != null;
+
+        int[][] directions = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+        for (int[] direction : directions) {
+            int newX = x + direction[0];
+            int newY = y + direction[1];
+
+            if (newX >= 0 && newX < largeur && newY >= 0 && newY < hauteur) {
+                Noeud<Case> neighborNode = graphe.getNoeud(newX, newY);
+                if (neighborNode != null) {
+                    Case neighborCase = neighborNode.getValeur();
+                    double cost = calculerCout(currentCase, neighborCase);
+                    graphe.ajouterArete(currentNode, neighborNode, cost);
+                    currentNode.ajouterVoisin(neighborNode);
                 }
             }
         }
     }
-    static List<Case> convertirNoeudsEnCases(List<Noeud<Case>> noeuds) {
-        List<Case> cases = new ArrayList<>();
-        for (Noeud<Case> noeud : noeuds) {
-            cases.add(noeud.getValeur());
-        }
-        return cases;
-    }
-    static double calculerCout(Case from, Case to) {
-        // Calcul du coût entre deux cases
-        Tuile tuileFrom = from.getTuile();
-        Tuile tuileTo = to.getTuile();
-        // Vous devrez adapter cette partie selon la logique spécifique de calcul de coût entre les tuiles
-        return Math.abs(tuileFrom.getPenalite() - tuileTo.getPenalite());
+
+    /**
+     * calcul le cout
+     * @param from a partir de
+     * @param to jusqua
+     * @return cout calculé
+     */
+    static double calculerCout(Case from, Case to){
+        return Math.abs(from.getX() - to.getX()) + Math.abs(from.getY() - to.getY());
     }
 
-    public static void afficherChemin(List<Noeud<Case>> chemin) {
-        System.out.println("Chemin :");
-        for (Noeud<Case> noeud : chemin) {
-            Case caseCourante = noeud.getValeur();
-            System.out.println("[" + caseCourante.getX() + ", " + caseCourante.getY() + "] : " + caseCourante.getTuile());
-        }
+    /**
+     * Affiche le chemin
+     * @param chemin chemin a afficher
+     */
+    static void afficherChemin(List<Noeud<Case>> chemin){
+        chemin.forEach(noeud -> {
+            Case caseActuelle = noeud.getValeur();
+            System.out.println("Case: x = " + caseActuelle.getX() + ", y = " + caseActuelle.getY());
+        });
     }
-
 }

@@ -1,5 +1,7 @@
 package fr.ecole3il.rodez2023.carte.chemin.elements;
 
+import fr.ecole3il.rodez2023.carte.elements.Case;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -65,5 +67,21 @@ public class Graphe<E> {
             return new ArrayList<>(voisins.get(noeud).keySet());
         }
         return new ArrayList<>();
+    }
+
+    /**
+     * Retourne le noeud en x y
+     * @param x coordonée x
+     * @param y coordonée y
+     * @return le noeud
+     */
+    public Noeud<E> getNoeud(int x, int y) {
+        for (Noeud<E> noeud : this.getNoeuds()) {
+            Case caseActuelle = (Case) noeud.getValeur();
+            if (caseActuelle.getX() == x && caseActuelle.getY() == y) {
+                return noeud;
+            }
+        }
+        return null;
     }
 }
