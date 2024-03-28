@@ -22,8 +22,8 @@ public class AdaptateurAlgorithme{
      */
     public static Chemin trouverChemin(AlgorithmeChemin<Case> algorithme, Carte carte, int xDepart, int yDepart, int xArrivee, int yArrivee){
         Graphe<Case> graphe = creerGraphe(carte);
-        Noeud<Case> noeudDepart = graphe.getNoeud(xDepart, yDepart);
-        Noeud<Case> noeudArrivee = graphe.getNoeud(xArrivee, yArrivee);
+        Noeud<Case> noeudDepart = getNoeud(graphe, xDepart, yDepart);
+        Noeud<Case> noeudArrivee = getNoeud(graphe, xArrivee, yArrivee);
         List<Noeud<Case>> cheminNoeuds = algorithme.trouverChemin(graphe, noeudDepart, noeudArrivee);
         List<Case> cheminCases = new ArrayList<>();
         for (Noeud<Case> noeud : cheminNoeuds) {
@@ -89,7 +89,7 @@ public class AdaptateurAlgorithme{
             int newY = y + direction[1];
 
             if (newX >= 0 && newX < largeur && newY >= 0 && newY < hauteur) {
-                Noeud<Case> neighborNode = graphe.getNoeud(newX, newY);
+                Noeud<Case> neighborNode = getNoeud(graphe,newX, newY);
                 if (neighborNode != null) {
                     Case neighborCase = neighborNode.getValeur();
                     double cost = calculerCout(currentCase, neighborCase);
@@ -120,4 +120,21 @@ public class AdaptateurAlgorithme{
             System.out.println("Case: x = " + caseActuelle.getX() + ", y = " + caseActuelle.getY());
         });
     }
+
+    /**
+     * Retourne le noeud en x y
+     * @param x coordonée x
+     * @param y coordonée y
+     * @return le noeud
+     */
+    private static Noeud<Case> getNoeud(Graphe graphe,int x, int y) {
+        for (Object noeud : graphe.getNoeuds()) {
+            Case caseActuelle = (Case) ((Noeud)noeud).getValeur();
+            if (caseActuelle.getX() == x && caseActuelle.getY() == y) {
+                return (Noeud)noeud;
+            }
+        }
+        return null;
+    }
+
 }

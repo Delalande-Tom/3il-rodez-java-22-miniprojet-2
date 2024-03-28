@@ -69,19 +69,5 @@ public class Graphe<E> {
         return new ArrayList<>();
     }
 
-    /**
-     * Retourne le noeud en x y
-     * @param x coordonée x
-     * @param y coordonée y
-     * @return le noeud
-     */
-    public Noeud<E> getNoeud(int x, int y) {
-        for (Noeud<E> noeud : this.getNoeuds()) {
-            Case caseActuelle = (Case) noeud.getValeur();
-            if (caseActuelle.getX() == x && caseActuelle.getY() == y) {
-                return noeud;
-            }
-        }
-        return null;
-    }
+
 }
